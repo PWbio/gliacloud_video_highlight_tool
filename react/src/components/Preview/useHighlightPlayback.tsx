@@ -128,6 +128,11 @@ export const useHighlightPlayback = (
       segments
     );
 
+    // start from the first segments
+    const currentSegment = segments[currentSegmentIndexRef.current];
+    if (currentSegment) {
+      videoRef.current.currentTime = currentSegment.start;
+    }
     videoRef.current.play();
     setIsPlayingHighlights(true);
   }, [
