@@ -13,6 +13,26 @@ interface HighlightSegment {
   sentenceIndex: number;
 }
 
+const findCurrentSegmentIndex = (
+  currentTime: number,
+  segments: HighlightSegment[]
+): number => {
+  // If current time is before first segment, start from beginning
+  if (currentTime < segments[0].start) {
+    return 0;
+  }
+
+  // Find the appropriate segment
+  for (let i = 0; i < segments.length; i++) {
+    if (currentTime >= segments[i].start && currentTime < segments[i].end) {
+      return i;
+    }
+  }
+
+  // If not found in any segment, start from beginning
+  return 0;
+};
+
 // Custom hook for handling highlight playback
 export const useHighlightPlayback = (
   videoRef: React.RefObject<HTMLVideoElement>
@@ -26,27 +46,6 @@ export const useHighlightPlayback = (
   const highlightSentences = useAppSelector(selectHighlightSentences);
   const transcriptTimeCue = useAppSelector(selectTranscriptTimeCue);
   const videoJumpCount = useAppSelector(selectVideoJumpCount);
-
-  // Helper function to find the current segment index based on current time
-  const findCurrentSegmentIndex = useCallback(
-    (currentTime: number, segments: HighlightSegment[]): number => {
-      // If current time is before first segment, start from beginning
-      if (currentTime < segments[0].start) {
-        return 0;
-      }
-
-      // Find the appropriate segment
-      for (let i = 0; i < segments.length; i++) {
-        if (currentTime >= segments[i].start && currentTime < segments[i].end) {
-          return i;
-        }
-      }
-
-      // If not found in any segment, start from beginning
-      return 0;
-    },
-    []
-  );
 
   // Function to stop playing highlights
   const stopHighlights = useCallback(() => {
@@ -152,8 +151,9 @@ export const useHighlightPlayback = (
 
   // Handle video jump
   useEffect(() => {
+    cleanupEventListeners();
     stopHighlights();
-  }, [videoJumpCount, stopHighlights]);
+  }, [videoJumpCount, stopHighlights, cleanupEventListeners]);
 
   // Return the state and control functions
 
