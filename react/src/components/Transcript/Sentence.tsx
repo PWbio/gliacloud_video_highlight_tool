@@ -1,10 +1,11 @@
 import { useAppSelector } from "@/hooks/reduxHooks";
 import {
-  addVideoJumpCount,
   selectTranscriptTimeline,
   selectVideoCurrentTimeInSeconds,
   setHighlightSentences,
   setVideoCurrentTime,
+  setVideoJumpCount,
+  setVideoJumpTime,
 } from "@/redux/slices/home/slice";
 import { SentenceEntry } from "@/types/home";
 import { Flex } from "antd";
@@ -15,15 +16,16 @@ import SentenceItem from "./SentenceItem";
 const Sentence = ({ data }: { data: SentenceEntry[] }) => {
   const dispatch = useDispatch();
   const currentTimeInSeconds = useAppSelector(selectVideoCurrentTimeInSeconds);
+  const transcriptTimeline = useAppSelector(selectTranscriptTimeline);
+
   const [selectedSentences, setSelectedSentences] = useState<Set<number>>(
     new Set()
   );
-  const sentenceRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState<
     number | null
   >(null);
 
-  const transcriptTimeline = useAppSelector(selectTranscriptTimeline);
+  const sentenceRefs = useRef<(HTMLDivElement | null)[]>([]);
   const refCallbacks = useRef(
     new Map<number, (el: HTMLDivElement | null) => void>()
   );
@@ -42,7 +44,7 @@ const Sentence = ({ data }: { data: SentenceEntry[] }) => {
         block: "center",
       });
     }
-  }, [currentTimeInSeconds]);
+  }, [currentSentenceIndex, currentTimeInSeconds, transcriptTimeline]);
 
   const handleSentenceClick = useCallback(
     (sentenceIndex: number) => {
@@ -56,7 +58,7 @@ const Sentence = ({ data }: { data: SentenceEntry[] }) => {
         return newSelected;
       });
       dispatch(setHighlightSentences(sentenceIndex));
-      dispatch(addVideoJumpCount());
+      dispatch(setVideoJumpCount());
     },
     [dispatch]
   );
@@ -64,7 +66,7 @@ const Sentence = ({ data }: { data: SentenceEntry[] }) => {
   const handleTimelineClick = useCallback(
     (time: number) => {
       dispatch(setVideoCurrentTime(time));
-      dispatch(addVideoJumpCount());
+      dispatch(setVideoJumpTime(time));
     },
     [dispatch]
   );

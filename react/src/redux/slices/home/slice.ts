@@ -5,6 +5,7 @@ import {
   TranscriptDataHash,
   TranscriptTimeCue,
   TranscriptTimeline,
+  VideoJumpState,
 } from "@/types/home";
 import { createSlice, PayloadAction, WithSlice } from "@reduxjs/toolkit";
 import { InitialState } from "./type";
@@ -14,7 +15,10 @@ const initialState: InitialState = {
   videoDuration: 0,
   videoCurrentTime: 0,
   videoCurrentTimeInSeconds: 0,
-  videoJumpCount: 0,
+  videoJumpState: {
+    count: 0,
+    time: 0,
+  },
   transcriptData: null,
   transcriptDataHash: {},
   transcriptTimeline: [],
@@ -39,8 +43,12 @@ const slice = createSlice({
     setVideoCurrentTimeInSeconds: (state, action: PayloadAction<number>) => {
       state.videoCurrentTimeInSeconds = action.payload;
     },
-    addVideoJumpCount: (state) => {
-      state.videoJumpCount = state.videoJumpCount + 1;
+    setVideoJumpTime: (state, action: PayloadAction<VideoJumpState["time"]>) => {
+      state.videoJumpState.count = state.videoJumpState.count + 1;
+      state.videoJumpState.time = action.payload
+    },
+    setVideoJumpCount: (state) => {
+      state.videoJumpState.count = state.videoJumpState.count + 1;
     },
     setTranscriptData: (
       state,
@@ -78,7 +86,8 @@ const slice = createSlice({
     selectVideoDuration: (state) => state.videoDuration,
     selectVideoCurrentTime: (state) => state.videoCurrentTime,
     selectVideoCurrentTimeInSeconds: (state) => state.videoCurrentTimeInSeconds,
-    selectVideoJumpCount: (state) => state.videoJumpCount,
+    selectVideoJumpTime: (state) => state.videoJumpState.time,
+    selectVideoJumpCount: (state) => state.videoJumpState.count,
     selectTranscriptData: (state) => state.transcriptData,
     selectTranscriptDataHash: (state) => state.transcriptDataHash,
     selectTranscriptTimeline: (state) => state.transcriptTimeline,
@@ -89,7 +98,7 @@ const slice = createSlice({
 
 /* -------------- Inject Reducer -------------- */
 declare module "@/redux/reducer" {
-  export interface LazyLoadedSlices extends WithSlice<typeof slice> {}
+  export interface LazyLoadedSlices extends WithSlice<typeof slice> { }
 }
 const injectedSlice = slice.injectInto(rootReducer);
 
@@ -100,7 +109,8 @@ export const {
   setVideoDuration,
   setVideoCurrentTime,
   setVideoCurrentTimeInSeconds,
-  addVideoJumpCount,
+  setVideoJumpTime,
+  setVideoJumpCount,
   setTranscriptData,
   setTranscriptDataHash,
   setTranscriptTimeline,
@@ -115,6 +125,7 @@ export const {
   selectVideoDuration,
   selectVideoCurrentTime,
   selectVideoCurrentTimeInSeconds,
+  selectVideoJumpTime,
   selectVideoJumpCount,
   selectTranscriptData,
   selectTranscriptDataHash,

@@ -31,3 +31,8 @@ export type TranscriptTimeCue = {
 }[];
 
 export type HighlightSentences = number[]; // sentenceIndex[]
+
+export interface VideoJumpState {
+  count: number,
+  time: number,
+}

@@ -1,14 +1,14 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import {
-  addVideoJumpCount,
   selectTranscriptDataHash,
   selectTranscriptTimeline,
   selectVideoCurrentTime,
   selectVideoCurrentTimeInSeconds,
-  selectVideoJumpCount,
+  selectVideoJumpTime,
   selectVideoUrl,
   setVideoCurrentTime,
   setVideoCurrentTimeInSeconds,
+  setVideoJumpTime,
 } from "@/redux/slices/home/slice";
 import {
   CaretRightOutlined,
@@ -30,7 +30,7 @@ const VideoPlayer = () => {
   const videoUrl = useAppSelector(selectVideoUrl);
   const currentTime = useAppSelector(selectVideoCurrentTime);
   const currentTimeInSeconds = useAppSelector(selectVideoCurrentTimeInSeconds);
-  const videoJumpCount = useAppSelector(selectVideoJumpCount);
+  const videoJumpTime = useAppSelector(selectVideoJumpTime);
   const transcriptDataHash = useAppSelector(selectTranscriptDataHash);
   const transcriptTimeline = useAppSelector(selectTranscriptTimeline);
 
@@ -93,7 +93,7 @@ const VideoPlayer = () => {
       if (videoRef.current) {
         videoRef.current.currentTime = time;
         dispatch(setVideoCurrentTime(time));
-        dispatch(addVideoJumpCount());
+        dispatch(setVideoJumpTime(time));
       }
     },
 
@@ -162,9 +162,9 @@ const VideoPlayer = () => {
   // Update video current time when currentTime changes manually
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.currentTime = currentTime;
+      videoRef.current.currentTime = videoJumpTime;
     }
-  }, [videoJumpCount]);
+  }, [videoJumpTime]);
 
   // Add this effect to update current subtitle
   useEffect(() => {

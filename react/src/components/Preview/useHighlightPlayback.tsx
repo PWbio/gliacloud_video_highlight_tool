@@ -2,7 +2,7 @@ import { useAppSelector } from "@/hooks/reduxHooks";
 import {
   selectHighlightSentences,
   selectTranscriptTimeCue,
-  selectVideoJumpCount,
+  selectVideoJumpCount
 } from "@/redux/slices/home/slice";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -134,14 +134,7 @@ export const useHighlightPlayback = (
     }
     videoRef.current.play();
     setIsPlayingHighlights(true);
-  }, [
-    videoRef,
-    highlightSentences,
-    transcriptTimeCue,
-    findCurrentSegmentIndex,
-    handleTimeUpdate,
-    cleanupEventListeners,
-  ]);
+  }, [videoRef, highlightSentences, transcriptTimeCue, handleTimeUpdate, cleanupEventListeners]);
 
   // Cleanup function
   const cleanup = useCallback(() => {
@@ -153,7 +146,7 @@ export const useHighlightPlayback = (
   useEffect(() => {
     cleanupEventListeners();
     stopHighlights();
-  }, [videoJumpCount, stopHighlights, cleanupEventListeners]);
+  }, [cleanupEventListeners, stopHighlights, videoJumpCount]);
 
   // Return the state and control functions
 
