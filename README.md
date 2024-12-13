@@ -1,3 +1,6 @@
+# Demo URL
+http://gliacloud.s3-website-us-east-1.amazonaws.com/
+
 # Video Highlight Tool - Frontend Homework Assignment
 
 - You should provide
